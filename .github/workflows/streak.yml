@@ -1,0 +1,28 @@
+name: Keep Streak Alive
+
+on:
+  schedule:
+    - cron: "50 23 * * *"   # Every day at 11:50 PM IST
+  workflow_dispatch:
+
+jobs:
+  auto_commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Add daily log
+      run: echo "$(date) - auto activity" >> log.txt
+
+    - name: Commit changes
+      run: |
+        git config --global user.name "streak-bot"
+        git config --global user.email "bot@example.com"
+        git add .
+        git commit -m "🔥 Daily streak update" || echo "no changes"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
